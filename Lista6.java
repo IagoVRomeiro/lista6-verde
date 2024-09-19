@@ -59,7 +59,12 @@ class Livro {
     private int quantidade_paginas;
     private float nota_avaliacao;
     private int quantidade_avaliacoes;
+    private float nota_media;
 
+
+    void setNota_media(float x){
+        this.nota_media = x;
+    }
 
     void setISBN(long x) {
         this.ISBN = x;
@@ -141,6 +146,10 @@ class Livro {
         return this.quantidade_avaliacoes;
     }
 
+    float getNota_media(){
+        return this.nota_media;
+    }
+
     @Override
     public String toString() {
         if (this.getSegundo_autor().equals("")) {
@@ -194,18 +203,16 @@ class Livro {
         this.setQuantidade_avaliacoes(Integer.parseInt(info[9]));
 
     }
-                                                                                                                                                                                                                                                                                                                                              
-
 
 }
 
 
 class Ordenacoes{
 
-    Livro selection(Livros vetor[]){
-    for (int i = 0; i < (n - 1); i++) {
+    Livro selection(Livro vetor[]){
+    for(int i = 0; i < (n - 1); i++) {
         int menor = i;
-        for (int j = (i + 1); j < n; j++){
+        for(int j = (i + 1); j < n; j++){
          if (array[menor] > array[j]){
             menor = j;
          }
@@ -215,7 +222,7 @@ class Ordenacoes{
         return vetor;
     }
 
-    Livro bubble(Livros vetor[]){
+    Livro bubble(Livro vetor[]){
         for(int i = vetor.lenght; i>0 i--){
             for(int j = 0; j< i-1;j++){
                 if(vetor[j] > vetor[j+1]){
@@ -228,11 +235,40 @@ class Ordenacoes{
         return vetor;
     }
 
-    Livro
+    Livro insertion(Livro vetor[]){
+        for(int i=1; i<vetor.lenght; i++){
+            for(int j = i; j > 0; j--){
+            if(vetor[j].getCategoria().equals(vetor[j-1].getCategoria())){
+                if(vetor[j].getNota_media() == vetor[j-1].getNota_media()){
+                    if(vetor[j].getQuantidade_avaliacoes() == vetor[j-1].getQuantidade_avaliacoes()){
+                        MyIO.println("Deu ruim bixo");
+                    }
+                    else if(vetor[j].getQuantidade_avaliacoes() > vetor[j-1].getQuantidade_avaliacoes()){//crescente
+                    Livro tmp = vetor[j];
+                    vetor[j]= vetor[j-1];
+                    vetor[j-1] = tmp;
+                    }
+                }
+                else if(vetor[j].getNota_media() > vetor[j-1].getNota_media()){//crescente
+                    Livro tmp = vetor[j];
+                    vetor[j]= vetor[j-1];
+                    vetor[j-1] = tmp;
+                    }
+            }
+            else if(vetor[j].getCategoria().compareTo(vetor[j-1].getCategoria()) < 0){//crescente
+                    Livro tmp = vetor[j];
+                    vetor[j]= vetor[j-1];
+                    vetor[j-1] = tmp;
+            }
+            }
+        }
+        return vetor;
+    }
 
+    Ordenacoes(){}
 
 }
-public class Lista5 {
+public class Lista6 {
     
     static Livro ler2(String linha) {
 
@@ -259,7 +295,10 @@ public class Lista5 {
     
         ArrayList<Livro> livros = new ArrayList<Livro>();
         ArquivoTextoLeitura txt = new ArquivoTextoLeitura("/tmp/livros.txt");
-        Ordenacoes ordenacao = new ordenacao();
+        Ordenacoes ordenacao = new Ordenacoes();
+
+
+
         String linha = txt.ler();
         while (linha != null) {
 
@@ -269,12 +308,11 @@ public class Lista5 {
             linha = txt.ler();
         }
 
-        ArrayList<Livro> bubble = 
-        ArrayList<Livro> selection = 
-        ArrayList<Livro> insertion = 
+        ArrayList<Livro> bubble = ordenacao.bubble(livros);
+        ArrayList<Livro> selection = ordenacao.selection(livros);
+        ArrayList<Livro> insertion = ordenacao.insertion(livros);
 
         linha = MyIO.readLine();
-
         while (!linha.equals("FIM")) {
 
             String[] info = linha.split(";");
