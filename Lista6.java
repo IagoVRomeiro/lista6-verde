@@ -2,7 +2,6 @@ import java.util.ArrayList;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.io.EOFException;
 import java.io.FileNotFoundException;
 
@@ -11,7 +10,6 @@ class ArquivoTextoLeitura {
     public BufferedReader entrada;
 
     ArquivoTextoLeitura(String nomeArquivo) {
-
         try {
             entrada = new BufferedReader(new FileReader(nomeArquivo));
         } catch (FileNotFoundException excecao) {
@@ -20,7 +18,6 @@ class ArquivoTextoLeitura {
     }
 
     public void fecharArquivo() {
-
         try {
             entrada.close();
         } catch (IOException excecao) {
@@ -30,12 +27,11 @@ class ArquivoTextoLeitura {
 
     @SuppressWarnings("finally")
     public String ler() {
-
         String textoEntrada = null;
 
         try {
             textoEntrada = entrada.readLine();
-        } catch (EOFException excecao) { // Excecao de final de arquivo.
+        } catch (EOFException excecao) {
             textoEntrada = null;
         } catch (IOException excecao) {
             System.out.println("Erro de leitura: " + excecao);
@@ -45,7 +41,6 @@ class ArquivoTextoLeitura {
         }
     }
 }
-
 
 class Livro {
 
@@ -61,8 +56,7 @@ class Livro {
     private int quantidade_avaliacoes;
     private float nota_media;
 
-
-    void setNota_media(float x){
+    void setNota_media(float x) {
         this.nota_media = x;
     }
 
@@ -146,7 +140,7 @@ class Livro {
         return this.quantidade_avaliacoes;
     }
 
-    float getNota_media(){
+    float getNota_media() {
         return this.nota_media;
     }
 
@@ -188,9 +182,7 @@ class Livro {
     }
 
     void ler(String linha) {
-
         String[] info = linha.split("\\|");
-
         this.setISBN(Long.parseLong(info[0]));
         this.setTitulo(info[1]);
         this.setAutor_principal(info[2]);
@@ -201,78 +193,84 @@ class Livro {
         this.setQuantidade_paginas(Integer.parseInt(info[7]));
         this.setNota_avaliacao(Float.parseFloat(info[8]));
         this.setQuantidade_avaliacoes(Integer.parseInt(info[9]));
-
     }
-
 }
 
+class Ordenacoes {
 
-class Ordenacoes{
+    void swap(ArrayList<Livro> vetor, int i, int j) {
+        Livro tmp = vetor.get(i);
+        vetor.set(i, vetor.get(j));
+        vetor.set(j, tmp);
+    }
 
-    Livro selection(Livro vetor[]){
-    for(int i = 0; i < (n - 1); i++) {
-        int menor = i;
-        for(int j = (i + 1); j < n; j++){
-         if (array[menor] > array[j]){
-            menor = j;
-         }
-        }
-        swap(menor, i);
+    ArrayList<Livro> selection(ArrayList<Livro> vetor) {
+        for (int i = 0; i < (vetor.size() - 1); i++) {
+            int menor = i;
+            for (int j = i + 1; j < vetor.size(); j++) {
+                if (vetor.get(menor).getCategoria().equals(vetor.get(j).getCategoria())) {
+                    if (vetor.get(menor).getNota_media() == vetor.get(j).getNota_media()) {
+                        if (vetor.get(menor).getQuantidade_avaliacoes() > vetor.get(j).getQuantidade_avaliacoes()) {
+                            menor = j;
+                        }
+                    } else if (vetor.get(menor).getNota_media() < vetor.get(j).getNota_media()) {
+                        menor = j;
+                    }
+                } else if (vetor.get(menor).getCategoria().compareTo(vetor.get(j).getCategoria()) > 0) {
+                    menor = j;
+                }
+            }
+            swap(vetor, menor, i);
         }
         return vetor;
     }
 
-    Livro bubble(Livro vetor[]){
-        for(int i = vetor.lenght; i>0 i--){
-            for(int j = 0; j< i-1;j++){
-                if(vetor[j] > vetor[j+1]){
-                int tmp = vetor[j];
-                vetor[j] = vetor[j+1];
-                vetor[j+1] = tmp;
+    ArrayList<Livro> bubble(ArrayList<Livro> vetor) {
+        for (int i = vetor.size(); i > 0; i--) {
+            for (int j = 0; j < i - 1; j++) {
+                if (vetor.get(j).getCategoria().equals(vetor.get(j + 1).getCategoria())) {
+                    if (vetor.get(j).getNota_media() == vetor.get(j + 1).getNota_media()) {
+                        if (vetor.get(j).getQuantidade_avaliacoes() > vetor.get(j + 1).getQuantidade_avaliacoes()) {
+                            swap(vetor, j, j + 1);
+                        }
+                    } else if (vetor.get(j).getNota_media() < vetor.get(j + 1).getNota_media()) {
+                        swap(vetor, j, j + 1);
+                    }
+                } else if (vetor.get(j).getCategoria().compareTo(vetor.get(j + 1).getCategoria()) > 0) {
+                    swap(vetor, j, j + 1);
                 }
             }
         }
         return vetor;
     }
 
-    Livro insertion(Livro vetor[]){
-        for(int i=1; i<vetor.lenght; i++){
-            for(int j = i; j > 0; j--){
-            if(vetor[j].getCategoria().equals(vetor[j-1].getCategoria())){
-                if(vetor[j].getNota_media() == vetor[j-1].getNota_media()){
-                    if(vetor[j].getQuantidade_avaliacoes() == vetor[j-1].getQuantidade_avaliacoes()){
-                        MyIO.println("Deu ruim bixo");
+    ArrayList<Livro> insertion(ArrayList<Livro> vetor) {
+        for (int i = 1; i < vetor.size(); i++) {
+            for (int j = i; j > 0; j--) {
+                if (vetor.get(j).getCategoria().equals(vetor.get(j - 1).getCategoria())) {
+                    if (vetor.get(j).getNota_media() == vetor.get(j - 1).getNota_media()) {
+                        if (vetor.get(j).getQuantidade_avaliacoes() > vetor.get(j - 1).getQuantidade_avaliacoes()) {
+                            swap(vetor, j, j - 1);
+                        }
+                    } else if (vetor.get(j).getNota_media() < vetor.get(j - 1).getNota_media()) {
+                        swap(vetor, j, j - 1);
                     }
-                    else if(vetor[j].getQuantidade_avaliacoes() > vetor[j-1].getQuantidade_avaliacoes()){//crescente
-                    Livro tmp = vetor[j];
-                    vetor[j]= vetor[j-1];
-                    vetor[j-1] = tmp;
-                    }
+                } else if (vetor.get(j).getCategoria().compareTo(vetor.get(j - 1).getCategoria()) < 0) {
+                    swap(vetor, j, j - 1);
                 }
-                else if(vetor[j].getNota_media() > vetor[j-1].getNota_media()){//crescente
-                    Livro tmp = vetor[j];
-                    vetor[j]= vetor[j-1];
-                    vetor[j-1] = tmp;
-                    }
-            }
-            else if(vetor[j].getCategoria().compareTo(vetor[j-1].getCategoria()) < 0){//crescente
-                    Livro tmp = vetor[j];
-                    vetor[j]= vetor[j-1];
-                    vetor[j-1] = tmp;
-            }
             }
         }
         return vetor;
     }
 
-    Ordenacoes(){}
-
+    Ordenacoes() {
+    }
 }
+
 public class Lista6 {
-    
-    static Livro ler2(String linha) {
 
-        String[] info = linha.split("");
+    static Livro ler2(String linha) {
+        String[] info = linha.split("\\|");
         long ISBN = Long.parseLong(info[0]);
         String titulo = info[1];
         String autor_p = info[2];
@@ -285,23 +283,16 @@ public class Lista6 {
         int qtd_avaliacao = Integer.parseInt(info[9]);
 
         return new Livro(ISBN, titulo, autor_p, autor_s, categoria, descricao, ano, qtd_paginas, avaliacao, qtd_avaliacao);
-
     }
-
-  
 
     public static void main(String[] args) {
 
-    
         ArrayList<Livro> livros = new ArrayList<Livro>();
         ArquivoTextoLeitura txt = new ArquivoTextoLeitura("/tmp/livros.txt");
         Ordenacoes ordenacao = new Ordenacoes();
 
-
-
         String linha = txt.ler();
         while (linha != null) {
-
             Livro livro = new Livro();
             livro.ler(linha);
             livros.add(livro);
@@ -312,22 +303,19 @@ public class Lista6 {
         ArrayList<Livro> selection = ordenacao.selection(livros);
         ArrayList<Livro> insertion = ordenacao.insertion(livros);
 
+ 
         linha = MyIO.readLine();
         while (!linha.equals("FIM")) {
-
             String[] info = linha.split(";");
 
-                for (Livro livro : livros) {
-
-                    if (livro.getTitulo().equals(info[0]) && livro.getAno_publicacao() == Integer.parseInt(info[1]) && livro.getAutor_principal().equals(info[2])) {
-                        livro.imprimir();
-                        break;
-                    }
+            for (Livro livro : livros) {
+                if (livro.getTitulo().equals(info[0]) && livro.getAno_publicacao() == Integer.parseInt(info[1]) && livro.getAutor_principal().equals(info[2])) {
+                    livro.imprimir();
+                    break;
                 }
-            
-            
-                linha = MyIO.readLine();
+            }
 
+            linha = MyIO.readLine();
         }
     }
 }
