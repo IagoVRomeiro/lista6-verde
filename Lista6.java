@@ -1,3 +1,4 @@
+
 import java.util.ArrayList;
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -147,9 +148,9 @@ class Livro {
     @Override
     public String toString() {
         if (this.getSegundo_autor().equals("")) {
-            return this.getAutor_principal() + ". " + this.getTitulo() + ". " + this.getAno_publicacao() + ". ISBN: " + this.getISBN() + ".";
+            return "[" + this.categoria + "] [" + this.nota_media + "] [" + this.quantidade_avaliacoes + "] " + this.autor_principal + ". " + this.titulo + ". " + this.ano_publicacao + ". ISBN: " + this.ISBN + ".";
         } else {
-            return this.getAutor_principal() + ", " + this.getSegundo_autor() + ". " + this.getTitulo() + ". " + this.getAno_publicacao() + ". ISBN: " + this.getISBN() + ".";
+            return "[" + this.categoria + "] [" + this.nota_media + "] [" + this.quantidade_avaliacoes + "] " + this.autor_principal + ". " + this.titulo + ". " + this.ano_publicacao + ". ISBN: " + this.ISBN + ".";
         }
     }
 
@@ -198,96 +199,133 @@ class Livro {
 
 class Ordenacoes {
 
-    void swap(ArrayList<Livro> vetor, int i, int j) {
+    public int movimentos;
+    public int comparacoes;
+
+    void troca(ArrayList<Livro> vetor, int i, int j) {
         Livro tmp = vetor.get(i);
         vetor.set(i, vetor.get(j));
         vetor.set(j, tmp);
     }
 
-    ArrayList<Livro> selection(ArrayList<Livro> vetor) {
-        for (int i = 0; i < (vetor.size() - 1); i++) {
-            int menor = i;
+    public ArrayList<Livro> bubble(ArrayList<Livro> vetor) {
+        int movimentos = 0;
+        int comparacoes = 0;
+    
+        for (int i = 0; i < vetor.size() - 1; i++) {
+            for (int j = 0; j < vetor.size() - i - 1; j++) {
+                comparacoes++;
+                if (vetor.get(j).getCategoria().compareTo(vetor.get(j + 1).getCategoria()) > 0) {
+                    troca(vetor, j, j + 1);
+                    movimentos++;
+                } else if (vetor.get(j).getCategoria().compareTo(vetor.get(j + 1).getCategoria()) == 0) {
+                    comparacoes++;
+                    if (vetor.get(j).getNota_media() < vetor.get(j + 1).getNota_media()) {
+                        troca(vetor, j, j + 1);
+                        movimentos++;
+                    } else if (vetor.get(j).getNota_media() == vetor.get(j + 1).getNota_media()) {
+                        comparacoes++;
+                        if (vetor.get(j).getQuantidade_avaliacoes() < vetor.get(j + 1).getQuantidade_avaliacoes()) {
+                            troca(vetor, j, j + 1);
+                            movimentos++;
+                        }
+                    }
+                }
+            }
+        }
+        return vetor;
+    }
+    
+
+    public ArrayList<Livro> selection(ArrayList<Livro> vetor) {
+        int movimentos = 0;
+        int comparacoes = 0;
+    
+        for (int i = 0; i < vetor.size() - 1; i++) {
+            int min = i;
+    
             for (int j = i + 1; j < vetor.size(); j++) {
-                if (vetor.get(menor).getCategoria().equals(vetor.get(j).getCategoria())) {
-                    if (vetor.get(menor).getNota_media() == vetor.get(j).getNota_media()) {
-                        if (vetor.get(menor).getQuantidade_avaliacoes() > vetor.get(j).getQuantidade_avaliacoes()) {
-                            menor = j;
+                comparacoes++;
+                if (vetor.get(j).getCategoria().compareTo(vetor.get(min).getCategoria()) < 0) {
+                    comparacoes++;
+                    min = j;
+                } else if (vetor.get(j).getCategoria().compareTo(vetor.get(min).getCategoria()) == 0) {
+                    if (vetor.get(j).getNota_media() > vetor.get(min).getNota_media()) {
+                        comparacoes++;
+                        min = j;
+                    } else if (vetor.get(j).getNota_media() == vetor.get(min).getNota_media()) {
+                        if (vetor.get(j).getQuantidade_avaliacoes() > vetor.get(min).getQuantidade_avaliacoes()) {
+                            comparacoes++;
+                            min = j;
                         }
-                    } else if (vetor.get(menor).getNota_media() < vetor.get(j).getNota_media()) {
-                        menor = j;
                     }
-                } else if (vetor.get(menor).getCategoria().compareTo(vetor.get(j).getCategoria()) > 0) {
-                    menor = j;
                 }
             }
-            swap(vetor, menor, i);
-        }
-        return vetor;
-    }
-
-    ArrayList<Livro> bubble(ArrayList<Livro> vetor) {
-        for (int i = vetor.size(); i > 0; i--) {
-            for (int j = 0; j < i - 1; j++) {
-                if (vetor.get(j).getCategoria().equals(vetor.get(j + 1).getCategoria())) {
-                    if (vetor.get(j).getNota_media() == vetor.get(j + 1).getNota_media()) {
-                        if (vetor.get(j).getQuantidade_avaliacoes() > vetor.get(j + 1).getQuantidade_avaliacoes()) {
-                            swap(vetor, j, j + 1);
-                        }
-                    } else if (vetor.get(j).getNota_media() < vetor.get(j + 1).getNota_media()) {
-                        swap(vetor, j, j + 1);
-                    }
-                } else if (vetor.get(j).getCategoria().compareTo(vetor.get(j + 1).getCategoria()) > 0) {
-                    swap(vetor, j, j + 1);
-                }
+    
+            if (min != i) {
+                troca(vetor, i, min);
+                movimentos++;
             }
         }
+    
         return vetor;
     }
+    
 
-    ArrayList<Livro> insertion(ArrayList<Livro> vetor) {
+    public ArrayList<Livro> insertion(ArrayList<Livro> vetor) {
+        int movimentos = 0;
+        int comparacoes = 0;
+    
         for (int i = 1; i < vetor.size(); i++) {
-            for (int j = i; j > 0; j--) {
-                if (vetor.get(j).getCategoria().equals(vetor.get(j - 1).getCategoria())) {
-                    if (vetor.get(j).getNota_media() == vetor.get(j - 1).getNota_media()) {
-                        if (vetor.get(j).getQuantidade_avaliacoes() > vetor.get(j - 1).getQuantidade_avaliacoes()) {
-                            swap(vetor, j, j - 1);
+            Livro tmp = vetor.get(i);
+            int j = i - 1;
+    
+            while (j >= 0) {
+                comparacoes++;
+                if (tmp.getCategoria().compareTo(vetor.get(j).getCategoria()) < 0) {
+                    vetor.set(j + 1, vetor.get(j));
+                    j--;
+                    movimentos++;
+                } else if (tmp.getCategoria().compareTo(vetor.get(j).getCategoria()) == 0) {
+                    comparacoes++;
+                    if (tmp.getNota_media() > vetor.get(j).getNota_media()) {
+                        vetor.set(j + 1, vetor.get(j));
+                        j--;
+                        movimentos++;
+                    } else if (tmp.getNota_media() == vetor.get(j).getNota_media()) {
+                        comparacoes++;
+                        if (tmp.getQuantidade_avaliacoes() > vetor.get(j).getQuantidade_avaliacoes()) {
+                            vetor.set(j + 1, vetor.get(j));
+                            j--;
+                            movimentos++;
+                        } else {
+                            break;
                         }
-                    } else if (vetor.get(j).getNota_media() < vetor.get(j - 1).getNota_media()) {
-                        swap(vetor, j, j - 1);
+                    } else {
+                        break;
                     }
-                } else if (vetor.get(j).getCategoria().compareTo(vetor.get(j - 1).getCategoria()) < 0) {
-                    swap(vetor, j, j - 1);
+                } else {
+                    break;
                 }
+            }
+    
+            if (j + 1 != i) {
+                vetor.set(j + 1, tmp);
+                movimentos++;
             }
         }
         return vetor;
     }
-
+    
     Ordenacoes() {
     }
 }
 
 public class Lista6 {
 
-    static Livro ler2(String linha) {
-        String[] info = linha.split("\\|");
-        long ISBN = Long.parseLong(info[0]);
-        String titulo = info[1];
-        String autor_p = info[2];
-        String autor_s = info[3];
-        String categoria = info[4];
-        String descricao = info[5];
-        int ano = Integer.parseInt(info[6]);
-        int qtd_paginas = Integer.parseInt(info[7]);
-        float avaliacao = Float.parseFloat(info[8]);
-        int qtd_avaliacao = Integer.parseInt(info[9]);
-
-        return new Livro(ISBN, titulo, autor_p, autor_s, categoria, descricao, ano, qtd_paginas, avaliacao, qtd_avaliacao);
-    }
-
     public static void main(String[] args) {
 
-        ArrayList<Livro> livros = new ArrayList<Livro>();
+        ArrayList<Livro> livrosTxt = new ArrayList<Livro>();
         ArquivoTextoLeitura txt = new ArquivoTextoLeitura("/tmp/livros.txt");
         Ordenacoes ordenacao = new Ordenacoes();
 
@@ -295,27 +333,49 @@ public class Lista6 {
         while (linha != null) {
             Livro livro = new Livro();
             livro.ler(linha);
-            livros.add(livro);
+            livrosTxt.add(livro);
             linha = txt.ler();
         }
 
-        ArrayList<Livro> bubble = ordenacao.bubble(livros);
-        ArrayList<Livro> selection = ordenacao.selection(livros);
-        ArrayList<Livro> insertion = ordenacao.insertion(livros);
+        ArrayList<Livro> livros = new ArrayList<Livro>();
 
- 
         linha = MyIO.readLine();
         while (!linha.equals("FIM")) {
             String[] info = linha.split(";");
 
-            for (Livro livro : livros) {
+            for (Livro livro : livrosTxt) {
                 if (livro.getTitulo().equals(info[0]) && livro.getAno_publicacao() == Integer.parseInt(info[1]) && livro.getAutor_principal().equals(info[2])) {
-                    livro.imprimir();
+                    livros.add(livro);
                     break;
                 }
             }
 
             linha = MyIO.readLine();
         }
+
+        ArrayList<Livro> bubble = ordenacao.bubble(livros);
+        for (Livro livro : bubble) {
+            livro.imprimir();
+        }
+
+        MyIO.println("## BUBBLE " + " [COMPARACOES] [" + ordenacao.comparacoes + "] [MOVIMENTACOES] [" + ordenacao.movimentos + "] \n");
+
+
+        ArrayList<Livro> selection = ordenacao.selection(livros);
+        for (Livro livro : selection) {
+            livro.imprimir();
+        }
+
+        MyIO.println("## SELECTION " + " [COMPARACOES] [" + ordenacao.comparacoes + "] [MOVIMENTACOES] [" + ordenacao.movimentos + "] \n");
+                       
+
+        ArrayList<Livro> insertion = ordenacao.insertion(livros);
+        for (Livro livro : insertion) {
+            livro.imprimir();
+        }
+
+        MyIO.println("## INSERTION " + " [COMPARACOES] [" + ordenacao.comparacoes + "] [MOVIMENTACOES] [" + ordenacao.movimentos + "] \n");
+                        
+
     }
 }
